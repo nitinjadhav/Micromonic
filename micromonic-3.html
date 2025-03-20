@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micromonic - Bespoke AI Solutions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.149.0/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: #4d69fa;
+            --primary-hover: #3a56e8;
+            --bg-dark: #050a18;
+            --bg-card: #0f172a;
+            --bg-section: #0a0f1d;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-accent: #4d69fa;
+            --border-color: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-dark);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            background-color: rgba(5, 10, 24, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-mark::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 20%,
+                rgba(255, 255, 255, 0.1) 30%,
+                transparent 40%
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .hero {
+            padding: 180px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-text {
+            flex: 1;
+        }
+        
+        .hero-text h1 {
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            background: linear-gradient(to right, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero-text p {
+            font-size: 18px;
+            margin-bottom: 32px;
+            color: var(--text-secondary);
+            animation: fadeInUp 1.2s ease;
+        }
+        
+        .hero-image {
+            flex: 1;
+            transform: perspective(800px) rotateY(-5deg);
+            animation: floatAnimation 6s ease-in-out infinite, fadeIn 1.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(77, 105, 250, 0.5);
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            z-index: -1;
+            animation: pulseGlow 4s infinite;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes floatAnimation {
+            0%, 100% {
+                transform: perspective(800px) rotateY(-5deg) translateY(0);
+            }
+            50% {
+                transform: perspective(800px) rotateY(-8deg) translateY(-15px);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                opacity: 0.6;
+                box-shadow: 0 0 10px rgba(77, 105, 250, 0.3);
+            }
+            50% {
+                opacity: 0.2;
+                box-shadow: 0 0 20px rgba(77, 105, 250, 0.7);
+            }
+        }
+        
+        .button {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: fadeInUp 1.4s ease;
+            box-shadow: 0 4px 10px rgba(77, 105, 250, 0.3);
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--primary-hover));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(77, 105, 250, 0.5);
+        }
+
+        .button:hover::before {
+            opacity: 1;
+        }
+        
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), transparent);
+        }
+        
+        .section-title p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features {
+            background-color: var(--bg-section);
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 15% 50%, rgba(77, 105, 250, 0.05), transparent 600px);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 40px 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(77, 105, 250, 0.1), transparent);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(77, 105, 250, 0.2);
+            border-color: rgba(77, 105, 250, 0.5);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(77, 105, 250, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+            font-size: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 1px solid rgba(77, 105, 250, 0.3);
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .feature-card:hover .feature-icon {
+            background-color: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .global-presence {
+            background-color: var(--bg-dark);
+            position: relative;
+        }
+        
+        .map-container {
+            position: relative;
+            height: 500px;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .map-svg {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-card);
+        }
+
+        .country {
+            fill: #1e293b;
+            stroke: #0f172a;
+            stroke-width: 0.5;
+            transition: fill 0.3s ease;
+        }
+
+        .grid-line {
+            stroke: rgba(77, 105, 250, 0.1);
+            stroke-width: 0.5;
+        }
+        
+        .office-location {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        .location-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .location-dot::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background-color: rgba(77, 105, 250, 0.4);
+            border-radius: 50%;
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .location-popup {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .location-popup::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--border-color) transparent transparent transparent;
+        }
+
+        .office-location:hover .location-popup {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        .manhattan { top: 35%; left: 25%; }
+        .paris { top: 33%; left: 47%; }
+        .pune { top: 48%; left: 65%; }
+        .hanoi { top: 46%; left: 75%; }
+        
+        footer {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            padding: 80px 0 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 10%, rgba(77, 105, 250, 0.05), transparent 70%);
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-col h4 {
+            font-size: 20px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .footer-col p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-contact a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-contact a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .footer-logo {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-logo-mark {
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary);
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 991px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .hero-content {
+                flex-direction: column;
+            }
+            
+            .hero-text, .hero-image {
+                flex: none;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .hero {
+                padding: 130px 0 80px;
+            }
+            
+            .section {
+                padding: 70px 0;
+            }
+            
+            .feature-card {
+                padding: 30px 20px;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-container" id="canvas-container"></div>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-mark"></div>
+                    Micromonic
+                </a>
+                <nav>
+                    <ul>
+                        <li><a href="#features">AI Solutions</a></li>
+                        <li><a href="#global">Global Presence</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Bespoke AI solutions for enterprise transformation</h1>
+                    <p>We create tailored artificial intelligence solutions that transform how businesses operate, analyze data, and deliver personalized experiences to their customers.</p>
+                    <a href="#contact" class="button">Get in touch</a>
+                </div>
+                <div class="hero-image">
+                    <svg width="600" height="400" viewBox="0 0 600 400">
+                        <!-- Dark background with gradient -->
+                        <rect width="600" height="400" fill="#0f172a" />
+                        
+                        <!-- Neural network visualization -->
+                        <g class="neural-network">
+                            <!-- Nodes (neurons) -->
+                            <!-- Input layer -->
+                            <circle cx="100" cy="100" r="8" fill="#4d69fa" class="neuron input-neuron" />
+                            <circle cx="100" cy="150" r="8" fill="#4d69fa" class="neuron input-neuron" />
+                            <circle cx="100" cy="200" r="8" fill="#4d69fa" class="neuron input-neuron" />
+                            <circle cx="100" cy="250" r="8" fill="#4d69fa" class="neuron input-neuron" />
+                            <circle cx="100" cy="300" r="8" fill="#4d69fa" class="neuron input-neuron" />
+                            
+                            <!-- Hidden layer 1 -->
+                            <circle cx="230" cy="80" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="230" cy="130" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="230" cy="180" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="230" cy="230" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="230" cy="280" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="230" cy="330" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            
+                            <!-- Hidden layer 2 -->
+                            <circle cx="360" cy="100" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="360" cy="150" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="360" cy="200" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="360" cy="250" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            <circle cx="360" cy="300" r="8" fill="#4d69fa" class="neuron hidden-neuron" />
+                            
+                            <!-- Output layer -->
+                            <circle cx="490" cy="130" r="8" fill="#4d69fa" class="neuron output-neuron" />
+                            <circle cx="490" cy="180" r="8" fill="#4d69fa" class="neuron output-neuron" />
+                            <circle cx="490" cy="230" r="8" fill="#4d69fa" class="neuron output-neuron" />
+                            <circle cx="490" cy="280" r="8" fill="#4d69fa" class="neuron output-neuron" />
+                            
+                            <!-- Connections between input and hidden layer 1 -->
+                            <!-- From input 1 -->
+                            <line x1="100" y1="100" x2="230" y2="80" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="100" y1="100" x2="230" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="100" x2="230" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="100" x2="230" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="100" x2="230" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="100" x2="230" y2="330" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            
+                            <!-- From input 2 -->
+                            <line x1="100" y1="150" x2="230" y2="80" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="150" x2="230" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="100" y1="150" x2="230" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="150" x2="230" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="150" x2="230" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="150" x2="230" y2="330" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            
+                            <!-- From input 3 -->
+                            <line x1="100" y1="200" x2="230" y2="80" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="200" x2="230" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="200" x2="230" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="100" y1="200" x2="230" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="200" x2="230" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="200" x2="230" y2="330" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            
+                            <!-- From input 4 -->
+                            <line x1="100" y1="250" x2="230" y2="80" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="250" x2="230" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="250" x2="230" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="250" x2="230" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="100" y1="250" x2="230" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="250" x2="230" y2="330" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            
+                            <!-- From input 5 -->
+                            <line x1="100" y1="300" x2="230" y2="80" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="300" x2="230" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.1" class="connection" />
+                            <line x1="100" y1="300" x2="230" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="100" y1="300" x2="230" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="100" y1="300" x2="230" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="100" y1="300" x2="230" y2="330" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.4" class="connection" />
+                            
+                            <!-- Connections between hidden layer 1 and hidden layer 2 (simplified) -->
+                            <line x1="230" y1="80" x2="360" y2="100" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="230" y1="80" x2="360" y2="150" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="230" y1="130" x2="360" y2="100" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="230" y1="130" x2="360" y2="150" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.5" class="connection" />
+                            <line x1="230" y1="130" x2="360" y2="200" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="230" y1="180" x2="360" y2="150" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="230" y1="180" x2="360" y2="200" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="230" y1="180" x2="360" y2="250" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="230" y1="230" x2="360" y2="200" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="230" y1="230" x2="360" y2="250" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="230" y1="230" x2="360" y2="300" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="230" y1="280" x2="360" y2="250" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="230" y1="280" x2="360" y2="300" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="230" y1="330" x2="360" y2="300" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.5" class="connection" />
+                            
+                            <!-- Connections between hidden layer 2 and output layer (simplified) -->
+                            <line x1="360" y1="100" x2="490" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="360" y1="100" x2="490" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="360" y1="150" x2="490" y2="130" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="360" y1="150" x2="490" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.5" class="connection" />
+                            <line x1="360" y1="150" x2="490" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="360" y1="200" x2="490" y2="180" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="360" y1="200" x2="490" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            <line x1="360" y1="200" x2="490" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.2" class="connection" />
+                            <line x1="360" y1="250" x2="490" y2="230" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.3" class="connection" />
+                            <line x1="360" y1="250" x2="490" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.5" class="connection" />
+                            <line x1="360" y1="300" x2="490" y2="280" stroke="#4d69fa" stroke-width="1" stroke-opacity="0.6" class="connection" />
+                            
+                            <!-- Data pulses that travel along connections -->
+                            <circle cx="100" cy="100" r="4" fill="#ffffff" class="data-pulse pulse1">
+                                <animateMotion 
+                                    path="M0 0 L130 -20" 
+                                    dur="2s" 
+                                    repeatCount="indefinite"
+                                    begin="0.2s" />
+                            </circle>
+                            
+                            <circle cx="100" cy="150" r="4" fill="#ffffff" class="data-pulse pulse2">
+                                <animateMotion 
+                                    path="M0 0 L130 -20" 
+                                    dur="1.8s" 
+                                    repeatCount="indefinite"
+                                    begin="0.5s" />
+                            </circle>
+                            
+                            <circle cx="230" cy="180" r="4" fill="#ffffff" class="data-pulse pulse3">
+                                <animateMotion 
+                                    path="M0 0 L130 20" 
+                                    dur="2.2s" 
+                                    repeatCount="indefinite"
+                                    begin="0.8s" />
+                            </circle>
+                            
+                            <circle cx="230" cy="230" r="4" fill="#ffffff" class="data-pulse pulse4">
+                                <animateMotion 
+                                    path="M0 0 L130 20" 
+                                    dur="1.9s" 
+                                    repeatCount="indefinite"
+                                    begin="1.2s" />
+                            </circle>
+                            
+                            <circle cx="360" cy="200" r="4" fill="#ffffff" class="data-pulse pulse5">
+                                <animateMotion 
+                                    path="M0 0 L130 30" 
+                                    dur="2.1s" 
+                                    repeatCount="indefinite"
+                                    begin="1.5s" />
+                            </circle>
+                        </g>
+                        
+                        <!-- Digital circuit patterns in the background -->
+                        <g class="circuit-patterns" opacity="0.15">
+                            <!-- Horizontal lines -->
+                            <line x1="20" y1="50" x2="580" y2="50" stroke="#8A98FF" stroke-width="1" />
+                            <line x1="40" y1="370" x2="560" y2="370" stroke="#8A98FF" stroke-width="1" />
+                            
+                            <!-- Circuit nodes -->
+                            <circle cx="40" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="120" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="200" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="280" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="360" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="440" cy="50" r="3" fill="#8A98FF" />
+                            <circle cx="520" cy="50" r="3" fill="#8A98FF" />
+                            
+                            <circle cx="40" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="120" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="200" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="280" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="360" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="440" cy="370" r="3" fill="#8A98FF" />
+                            <circle cx="520" cy="370" r="3" fill="#8A98FF" />
+                            
+                            <!-- Vertical connectors -->
+                            <line x1="40" y1="50" x2="40" y2="370" stroke="#8A98FF" stroke-width="1" />
+                            <line x1="200" y1="50" x2="200"
+            </div>
+        </div>
+    </section>
+    
+    <section id="features" class="section features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our AI Solutions</h2>
+                <p>Bespoke artificial intelligence solutions designed to transform enterprises with intelligent automation, analysis, and personalized experiences.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Conversational AI</h3>
+                    <p>Intelligent conversational interfaces that engage customers naturally, provide 24/7 support, and scale your customer operations while maintaining a personalized touch.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Financial Health Prediction</h3>
+                    <p>AI-powered analysis of P&L, cash flow, and balance sheets to predict company financial health, identify trends, and provide actionable insights for strategic decision making.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Enterprise Knowledge Search</h3>
+                    <p>AI-powered internal search that puts company knowledge at employees' fingertips, connecting them to information across Confluence, Jive, files, and policies with persona-based access.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Perception Management (GUARDIAN)</h3>
+                    <p>Advanced reputation monitoring and management platform that uses AI to detect, analyze, and respond to brand perception shifts across digital channels in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="global" class="section global-presence">
+        <div class="container">
+            <div class="section-title">
+                <h2>Global Presence</h2>
+                <p>Micromonic operates across four strategic locations worldwide, ensuring comprehensive support for our global clients.</p>
+            </div>
+            <div class="map-container" id="map-container">
+                <svg class="map-svg" id="map-svg" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet">
+                    <rect x="0" y="0" width="960" height="500" fill="#0f172a" />
+                    
+                    <!-- Grid lines -->
+                    <g class="grid-lines">
+                        <!-- Latitude lines -->
+                        <line class="grid-line" x1="0" y1="100" x2="960" y2="100" />
+                        <line class="grid-line" x1="0" y1="200" x2="960" y2="200" />
+                        <line class="grid-line" x1="0" y1="300" x2="960" y2="300" />
+                        <line class="grid-line" x1="0" y1="400" x2="960" y2="400" />
+                        
+                        <!-- Longitude lines -->
+                        <line class="grid-line" x1="160" y1="0" x2="160" y2="500" />
+                        <line class="grid-line" x1="320" y1="0" x2="320" y2="500" />
+                        <line class="grid-line" x1="480" y1="0" x2="480" y2="500" />
+                        <line class="grid-line" x1="640" y1="0" x2="640" y2="500" />
+                        <line class="grid-line" x1="800" y1="0" x2="800" y2="500" />
+                    </g>
+                    
+                    <!-- North America -->
+                    <path class="country" d="M170,80 C160,85 150,90 140,100 C130,110 120,120 115,130 C110,140 105,150 100,160 C95,165 90,170 90,180 C90,190 95,200 100,210 C105,220 110,230 115,240 C120,250 130,260 140,265 C150,270 160,275 170,280 C180,285 190,290 200,290 C210,290 220,285 230,280 C240,275 250,270 255,260 C260,250 265,240 270,230 C275,220 280,210 280,200 C280,190 275,180 270,170 C265,160 260,150 255,140 C250,130 240,120 230,115 C220,110 210,105 200,100 C190,95 180,90 170,80 Z" />
+                    
+                    <!-- South America -->
+                    <path class="country" d="M235,270 C245,280 250,290 255,300 C260,310 265,320 265,330 C265,340 260,350 255,360 C250,370 245,380 240,390 C235,400 230,410 220,415 C210,420 200,425 190,425 C180,425 170,420 160,415 C150,410 145,400 140,390 C135,380 130,370 130,360 C130,350 135,340 140,330 C145,320 150,310 160,305 C170,300 180,295 190,295 C200,295 210,300 220,305 C230,310 235,260 235,270 Z" />
+                    
+                    <!-- Western Europe -->
+                    <path class="country" d="M450,120 C460,115 470,110 480,110 C490,110 500,115 510,120 C520,125 525,135 530,145 C535,155 540,165 540,175 C540,185 535,195 530,205 C525,215 520,225 510,230 C500,235 490,240 480,240 C470,240 460,235 450,230 C440,225 435,215 430,205 C425,195 420,185 420,175 C420,165 425,155 430,145 C435,135 440,125 450,120 Z" />
+                    
+                    <!-- Africa -->
+                    <path class="country" d="M460,200 C470,195 480,190 490,190 C500,190 510,195 520,200 C530,205 540,215 545,225 C550,235 555,245 555,255 C555,265 550,275 545,285 C540,295 530,305 520,310 C510,315 500,320 490,320 C480,320 470,315 460,310 C450,305 440,295 435,285 C430,275 425,265 425,255 C425,245 430,235 435,225 C440,215 450,205 460,200 Z" />
+                    
+                    <!-- East Asia -->
+                    <path class="country" d="M680,140 C690,135 700,130 710,130 C720,130 730,135 740,140 C750,145 760,155 765,165 C770,175 775,185 775,195 C775,205 770,215 765,225 C760,235 750,245 740,250 C730,255 720,260 710,260 C700,260 690,255 680,250 C670,245 660,235 655,225 C650,215 645,205 645,195 C645,185 650,175 655,165 C660,155 670,145 680,140 Z" />
+                    
+                    <!-- India -->
+                    <path class="country" d="M605,220 C615,215 625,210 635,210 C645,210 655,215 665,220 C675,225 685,235 690,245 C695,255 700,265 700,275 C700,285 695,295 690,305 C685,315 675,325 665,330 C655,335 645,340 635,340 C625,340 615,335 605,330 C595,325 585,315 580,305 C575,295 570,285 570,275 C570,265 575,255 580,245 C585,235 595,225 605,220 Z" />
+                    
+                    <!-- Australia -->
+                    <path class="country" d="M770,370 C780,365 790,360 800,360 C810,360 820,365 830,370 C840,375 845,385 850,395 C855,405 860,415 860,425 C860,435 855,445 850,455 C845,465 840,475 830,480 C820,485 810,490 800,490 C790,490 780,485 770,480 C760,475 750,465 745,455 C740,445 735,435 735,425 C735,415 740,405 745,395 C750,385 760,375 770,370 Z" />
+                    
+                    <!-- Southeast Asia -->
+                    <path class="country" d="M735,260 C745,255 755,250 765,250 C775,250 785,255 795,260 C805,265 815,275 820,285 C825,295 830,305 830,315 C830,325 825,335 820,345 C815,355 805,365 795,370 C785,375 775,380 765,380 C755,380 745,375 735,370 C725,365 715,355 710,345 C705,335 700,325 700,315 C700,305 705,295 710,285 C715,275 725,265 735,260 Z" />
+                    
+                    <!-- Connection lines between office locations -->
+                    <line class="connection-line" x1="240" y1="175" x2="480" y2="160" stroke="#4d69fa" stroke-width="1.5" stroke-opacity="0.3" />
+                    <line class="connection-line" x1="480" y1="160" x2="635" y2="270" stroke="#4d69fa" stroke-width="1.5" stroke-opacity="0.3" />
+                    <line class="connection-line" x1="635" y1="270" x2="750" y2="300" stroke="#4d69fa" stroke-width="1.5" stroke-opacity="0.3" />
+                    <line class="connection-line" x1="240" y1="175" x2="750" y2="300" stroke="#4d69fa" stroke-width="1.5" stroke-opacity="0.3" />
+                    
+                    <!-- Highlighted areas around office locations -->
+                    <circle cx="240" cy="175" r="15" fill="rgba(77, 105, 250, 0.1)" />
+                    <circle cx="480" cy="160" r="15" fill="rgba(77, 105, 250, 0.1)" />
+                    <circle cx="635" cy="270" r="15" fill="rgba(77, 105, 250, 0.1)" />
+                    <circle cx="750" cy="300" r="15" fill="rgba(77, 105, 250, 0.1)" />
+                </svg>
+                
+                <div class="office-location manhattan">
+                    <div class="location-dot"></div>
+                    <div class="location-popup">Manhattan, New York</div>
+                </div>
+                <div class="office-location paris">
+                    <div class="location-dot"></div>
+                    <div class="location-popup">Paris, France</div>
+                </div>
+                <div class="office-location pune">
+                    <div class="location-dot"></div>
+                    <div class="location-popup">Pune, India</div>
+                </div>
+                <div class="office-location hanoi">
+                    <div class="location-dot"></div>
+                    <div class="location-popup">Hanoi, Vietnam</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Micromonic</h4>
+                    <p>Bespoke AI solutions for enterprise transformation, empowering businesses to leverage artificial intelligence for growth, efficiency, and innovation.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>AI Solutions</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Conversational AI</a></li>
+                        <li><a href="#">Financial Health AI</a></li>
+                        <li><a href="#">Enterprise Search</a></li>
+                        <li><a href="#">Perception Management</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Our Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">AI Research</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Global Offices</h4>
+                    <div class="footer-contact">
+                        <a href="#">Manhattan, New York</a>
+                        <a href="#">Paris, France</a>
+                        <a href="#">Pune, India</a>
+                        <a href="#">Hanoi, Vietnam</a>
+                        <a href="mailto:ai@micromonic.com">ai@micromonic.com</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <a href="#" class="footer-logo">
+                    <div class="footer-logo-mark"></div>
+                    Micromonic
+                </a>
+                <div class="copyright">
+                    &copy; 2025 Micromonic. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Three.js background animation
+        const initBackgroundAnimation = () => {
+            const container = document.getElementById('canvas-container');
+            
+            // Create scene, camera, and renderer
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particleCount = 500;
+            
+            const posArray = new Float32Array(particleCount * 3);
+            const scaleArray = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                // Position
+                posArray[i] = (Math.random() - 0.5) * 15;
+                posArray[i + 1] = (Math.random() - 0.5) * 15;
+                posArray[i + 2] = (Math.random() - 0.5) * 10 - 5;
+                
+                // Scale (size)
+                scaleArray[i / 3] = Math.random();
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            particlesGeometry.setAttribute('scale', new THREE.BufferAttribute(scaleArray, 1));
+            
+            // Material
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                color: 0x4d69fa,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+            
+            // Mesh
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+            
+            // Position camera
+            camera.position.z = 5;
+            
+            // Mouse movement
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                // Update camera
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                
+                // Update renderer
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            // Animation loop
+            const animate = () => {
+                requestAnimationFrame(animate);
+                
+                // Rotate particles
+                particlesMesh.rotation.x += 0.0003;
+                particlesMesh.rotation.y += 0.0005;
+                
+                // Responsive to mouse
+                particlesMesh.rotation.x += mouseY * 0.0003;
+                particlesMesh.rotation.y += mouseX * 0.0003;
+                
+                renderer.render(scene, camera);
+            };
+            
+            animate();
+        };
+        
+        // Initialize Three.js background
+        initBackgroundAnimation();
+        
+        // Add special product section for GUARDIAN
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a new section after features
+            const featuresSection = document.getElementById('features');
+            const guardian = document.createElement('section');
+            guardian.id = 'guardian';
+            guardian.className = 'section guardian-section';
+            guardian.innerHTML = `
+                <div class="container">
+                    <div class="guardian-content">
+                        <div class="guardian-text">
+                            <h2>GUARDIAN</h2>
+                            <h3>Advanced Perception Management</h3>
+                            <p>Protect and enhance your brand reputation with our flagship AI-powered perception management platform. GUARDIAN monitors, analyzes, and helps you respond to brand perception shifts across all digital channels.</p>
+                            <ul class="guardian-features">
+                                <li>
+                                    <span class="guardian-feature-icon">🔄</span>
+                                    <span>Real-time sentiment analysis across social media, news, and review platforms</span>
+                                </li>
+                                <li>
+                                    <span class="guardian-feature-icon">⚠️</span>
+                                    <span>Early warning system for potential PR issues and reputation threats</span>
+                                </li>
+                                <li>
+                                    <span class="guardian-feature-icon">📊</span>
+                                    <span>Comprehensive analytics dashboard with actionable insights</span>
+                                </li>
+                                <li>
+                                    <span class="guardian-feature-icon">📱</span>
+                                    <span>Mobile alerts and response recommendations</span>
+                                </li>
+                            </ul>
+                            <a href="#contact" class="button">Learn more about GUARDIAN</a>
+                        </div>
+                        <div class="guardian-image">
+                            <img src="/api/placeholder/500/350" alt="GUARDIAN Dashboard" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            featuresSection.after(guardian);
+            
+            // Add styles for the new section
+            const style = document.createElement('style');
+            style.textContent = `
+                .guardian-section {
+                    background-color: var(--bg-dark);
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .guardian-section::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: radial-gradient(circle at 80% 50%, rgba(77, 105, 250, 0.08), transparent 70%);
+                    z-index: 0;
+                }
+                
+                .guardian-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 50px;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .guardian-text {
+                    flex: 1;
+                }
+                
+                .guardian-text h2 {
+                    font-size: 42px;
+                    color: var(--primary);
+                    margin-bottom: 10px;
+                    background: linear-gradient(to right, var(--primary), #8a98ff);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                
+                .guardian-text h3 {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                    color: var(--text-primary);
+                }
+                
+                .guardian-text p {
+                    font-size: 18px;
+                    margin-bottom: 30px;
+                    color: var(--text-secondary);
+                    line-height: 1.7;
+                }
+                
+                .guardian-features {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0 0 40px 0;
+                }
+                
+                .guardian-features li {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 15px;
+                    margin-bottom: 20px;
+                    color: var(--text-secondary);
+                }
+                
+                .guardian-feature-icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 30px;
+                    height: 30px;
+                    background-color: rgba(77, 105, 250, 0.1);
+                    border-radius: 50%;
+                    flex-shrink: 0;
+                }
+                
+                .guardian-image {
+                    flex: 1;
+                    position: relative;
+                }
+                
+                .guardian-image img {
+                    max-width: 100%;
+                    border-radius: 8px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(77, 105, 250, 0.3);
+                    transform: perspective(1000px) rotateY(10deg);
+                    transition: all 0.5s ease;
+                    border: 1px solid rgba(77, 105, 250, 0.2);
+                }
+                
+                .guardian-image:hover img {
+                    transform: perspective(1000px) rotateY(0deg);
+                }
+                
+                .guardian-image::before {
+                    content: '';
+                    position: absolute;
+                    top: -20px;
+                    left: 20px;
+                    width: 100%;
+                    height: 100%;
+                    border: 2px solid var(--primary);
+                    border-radius: 10px;
+                    z-index: -1;
+                    opacity: 0.4;
+                }
+                
+                @media (max-width: 991px) {
+                    .guardian-content {
+                        flex-direction: column;
+                    }
+                    
+                    .guardian-text, .guardian-image {
+                        width: 100%;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+                
+        // Scroll animations for elements
+        const animateOnScroll = () => {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            featureCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(40px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+        };
+        
+        // Initialize scroll animations
+        window.addEventListener('load', animateOnScroll);
+                
+        renderer.render
