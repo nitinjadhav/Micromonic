@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Concepts Visual Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        
+        .main-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 800px;
+        }
+        
+        .section {
+            padding: 40px;
+            position: relative;
+        }
+        
+        .section-1 {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-right: 3px solid #dee2e6;
+        }
+        
+        .section-2 {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 100%);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #FF6B35;
+        }
+        
+        .concept-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .concept-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #FF6B35;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .concept-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .concept-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .prompt-icon { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .rag-icon { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .tune-icon { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .agent-icon { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        .mcp-icon { background: linear-gradient(135deg, #00BCD4, #0097A7); }
+        .a2a-icon { background: linear-gradient(135deg, #E91E63, #C2185B); }
+        
+        .concept-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .concept-subtitle {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+            margin: 5px 0 0 0;
+        }
+        
+        .concept-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .concept-features {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .features-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .features-list li {
+            padding: 3px 0;
+            position: relative;
+            padding-left: 15px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .features-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #FF6B35;
+            font-weight: bold;
+        }
+        
+        .workflow-diagram {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border-radius: 10px;
+            border: 1px dashed #dee2e6;
+        }
+        
+        .workflow-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .workflow-step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #666;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .arrow {
+            color: #FF6B35;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .connection-line {
+            position: absolute;
+            top: 50%;
+            right: -3px;
+            width: 6px;
+            height: 100px;
+            background: linear-gradient(180deg, #FF6B35, #FF8C42);
+            transform: translateY(-50%);
+            border-radius: 3px;
+        }
+        
+        .section-1 .concept-card:last-child .connection-line {
+            display: none;
+        }
+        
+        .integration-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF6B35;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .complexity-meter {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .complexity-label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .complexity-bars {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .complexity-bar {
+            width: 8px;
+            height: 15px;
+            border-radius: 2px;
+        }
+        
+        .bar-filled { background: #FF6B35; }
+        .bar-empty { background: #e9ecef; }
+        
+        .footer-note {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-1 {
+                border-right: none;
+                border-bottom: 3px solid #dee2e6;
+            }
+            
+            .connection-line {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .concept-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .workflow-steps {
+                flex-direction: column;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">AI Technology Stack</div>
+            <div class="subtitle">Core AI Development & Advanced AI Systems</div>
+        </div>
+        
+        <div class="main-sections">
+            <!-- Section 1: Core AI Development -->
+            <div class="section section-1">
+                <h2 class="section-title">Core AI Development</h2>
+                
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="integration-badge">Foundation</div>
+                        <div class="concept-header">
+                            <div class="concept-icon prompt-icon">📝</div>
+                            <div>
+                                <div class="concept-title">Prompt Engineering</div>
+                                <div class="concept-subtitle">Optimizing AI Communication</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            The art and science of crafting precise instructions to guide AI models toward desired outputs. It involves strategically designing prompts to maximize accuracy, relevance, and consistency.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 Prompt Engineering Process</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Define Goal</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Craft Prompt</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Test & Iterate</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Optimize</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">✨ Key Techniques:</div>
+                            <ul class="features-list">
+                                <li>Zero-shot and few-shot prompting</li>
+                                <li>Chain-of-thought reasoning</li>
+                                <li>Role-based prompting</li>
+                                <li>Context window optimization</li>
+                                <li>Temperature and parameter tuning</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                            </div>
+                        </div>
+                        <div class="connection-line"></div>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="integration-badge">Enhancement</div>
+                        <div class="concept-header">
+                            <div class="concept-icon rag-icon">🔍</div>
+                            <div>
+                                <div class="concept-title">RAG (Retrieval-Augmented Generation)</div>
+                                <div class="concept-subtitle">Dynamic Knowledge Integration</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            A technique that enhances AI responses by retrieving relevant information from external knowledge bases in real-time, combining the power of large language models with up-to-date, domain-specific data.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 RAG Process Flow</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Query Input</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Search Database</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Retrieve Context</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Generate Response</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">🎯 Core Components:</div>
+                            <ul class="features-list">
+                                <li>Vector databases and embeddings</li>
+                                <li>Semantic search algorithms</li>
+                                <li>Document chunking strategies</li>
+                                <li>Relevance scoring and ranking</li>
+                                <li>Context injection and synthesis</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                            </div>
+                        </div>
+                        <div class="connection-line"></div>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="integration-badge">Customization</div>
+                        <div class="concept-header">
+                            <div class="concept-icon tune-icon">⚙️</div>
+                            <div>
+                                <div class="concept-title">Fine Tuning</div>
+                                <div class="concept-subtitle">Model Specialization</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            The process of adapting pre-trained AI models to specific tasks or domains by training them on specialized datasets, creating models that excel in particular use cases while maintaining general capabilities.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 Fine Tuning Pipeline</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Prepare Data</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Select Base Model</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Train & Validate</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Deploy Model</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">🛠️ Techniques & Methods:</div>
+                            <ul class="features-list">
+                                <li>Parameter-efficient fine-tuning (PEFT)</li>
+                                <li>Low-rank adaptation (LoRA)</li>
+                                <li>Task-specific dataset preparation</li>
+                                <li>Hyperparameter optimization</li>
+                                <li>Model evaluation and validation</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Advanced AI Systems -->
+            <div class="section section-2">
+                <h2 class="section-title">Advanced AI Systems</h2>
+                
+                <div class="concept-grid">
+                    <div class="concept-card">
+                        <div class="integration-badge">Autonomous</div>
+                        <div class="concept-header">
+                            <div class="concept-icon agent-icon">🤖</div>
+                            <div>
+                                <div class="concept-title">Agentic AI</div>
+                                <div class="concept-subtitle">Autonomous AI Systems</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            AI systems that can operate independently, make decisions, and take actions to achieve specific goals without constant human oversight. These agents can plan, execute, and adapt their strategies dynamically.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 Agentic AI Cycle</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Perceive Environment</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Plan Actions</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Execute Tasks</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Learn & Adapt</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">🎯 Agent Capabilities:</div>
+                            <ul class="features-list">
+                                <li>Goal-oriented behavior</li>
+                                <li>Multi-step reasoning and planning</li>
+                                <li>Tool usage and API integration</li>
+                                <li>Memory and state management</li>
+                                <li>Adaptive learning mechanisms</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="integration-badge">Protocol</div>
+                        <div class="concept-header">
+                            <div class="concept-icon mcp-icon">🔗</div>
+                            <div>
+                                <div class="concept-title">MCP (Model Context Protocol)</div>
+                                <div class="concept-subtitle">Standardized AI Communication</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            A standardized protocol that enables AI models to seamlessly connect with external tools, databases, and services, providing a unified interface for context sharing and resource access across different systems.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 MCP Integration Flow</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Request Context</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Protocol Handshake</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Data Exchange</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Context Update</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">🌐 Protocol Features:</div>
+                            <ul class="features-list">
+                                <li>Standardized API endpoints</li>
+                                <li>Real-time context synchronization</li>
+                                <li>Multi-modal data support</li>
+                                <li>Security and authentication</li>
+                                <li>Cross-platform compatibility</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-empty"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="integration-badge">Network</div>
+                        <div class="concept-header">
+                            <div class="concept-icon a2a-icon">🌐</div>
+                            <div>
+                                <div class="concept-title">A2A (Agent-to-Agent)</div>
+                                <div class="concept-subtitle">Multi-Agent Collaboration</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-description">
+                            Advanced systems where multiple AI agents communicate, collaborate, and coordinate with each other to solve complex problems, enabling distributed intelligence and specialized task delegation.
+                        </div>
+                        
+                        <div class="workflow-diagram">
+                            <div class="workflow-title">🔄 A2A Coordination</div>
+                            <div class="workflow-steps">
+                                <div class="workflow-step">Task Distribution</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Agent Communication</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Result Synthesis</div>
+                                <div class="arrow">→</div>
+                                <div class="workflow-step">Collective Output</div>
+                            </div>
+                        </div>
+                        
+                        <div class="concept-features">
+                            <div class="features-title">🤝 Collaboration Models:</div>
+                            <ul class="features-list">
+                                <li>Hierarchical agent structures</li>
+                                <li>Peer-to-peer communication</li>
+                                <li>Consensus mechanisms</li>
+                                <li>Load balancing and scheduling</li>
+                                <li>Conflict resolution protocols</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="complexity-meter">
+                            <span class="complexity-label">Complexity:</span>
+                            <div class="complexity-bars">
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                                <div class="complexity-bar bar-filled"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            🧠 <strong>Micromonic's AI Technology Stack</strong> - From foundational techniques to advanced autonomous systems, powering next-generation AI solutions
+        </div>
+    </div>
+</body>
+</html>
